@@ -14,6 +14,7 @@ public class Animal {
     String name;
     @ManyToOne
     Gender gender;
+    @Lob
     String description;
     Double price;
 
