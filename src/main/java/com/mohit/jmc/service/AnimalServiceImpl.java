@@ -1,5 +1,7 @@
 package com.mohit.jmc.service;
 
+import com.mohit.jmc.converter.AnimalConverter;
+import com.mohit.jmc.dto.AnimalDto;
 import com.mohit.jmc.model.Animal;
 import com.mohit.jmc.repository.AnimalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,8 @@ public class AnimalServiceImpl implements AnimalService{
 
     @Autowired
     AnimalRepository animalRepository;
+    @Autowired
+    AnimalConverter animalConverter;
 
     @Override
     public List<Animal> getAllAnimal() {
@@ -50,5 +54,29 @@ public class AnimalServiceImpl implements AnimalService{
         }
 
         return animal;
+    }
+
+    @Override
+    public Boolean createOrUpdateAnimal(AnimalDto animalDto) {
+        Animal animal = null;
+
+        try {
+
+            if(animalDto.getId() == null ){
+                animal = new Animal();
+                animal = animalConverter.overwriteAnimal(animalDto, animal);
+            }else{
+                animal = animalRepository.findOne(animalDto.getId());
+                animal = animalConverter.overwriteAnimal(animalDto, animal);
+            }
+            animalRepository.save(animal);
+
+        }catch (Exception e){
+
+            e.printStackTrace();
+
+        }
+
+        return true;
     }
 }
