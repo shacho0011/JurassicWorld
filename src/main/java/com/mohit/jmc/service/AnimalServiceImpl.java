@@ -3,9 +3,11 @@ package com.mohit.jmc.service;
 import com.mohit.jmc.model.Animal;
 import com.mohit.jmc.repository.AnimalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class AnimalServiceImpl implements AnimalService{
 
     @Autowired
