@@ -5,7 +5,8 @@ import lombok.Data;
 @Data
 public class AnimalDto extends AnimalOverviewDto{
 
+    Long id;
     String description;
-    String genderName;
+    String gender;
 
 }
