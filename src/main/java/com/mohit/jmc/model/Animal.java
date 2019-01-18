@@ -16,8 +16,6 @@ public class Animal {
     Gender gender;
     String description;
     Double price;
-    @ManyToOne
-    Taxonomy taxonomy;
 
 }
 
