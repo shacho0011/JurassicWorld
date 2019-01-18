@@ -1,10 +1,11 @@
 package com.mohit.jmc.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mohit.jmc.dto.AnimalDto;
 import com.mohit.jmc.dto.AnimalOverviewDto;
 import com.mohit.jmc.model.Animal;
 import com.mohit.jmc.service.AnimalService;
 import com.mohit.jmc.service.DtoUtilService;
-import jdk.nashorn.internal.runtime.options.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,6 +71,25 @@ public class AnimalRestController {
             }else{
                 responseEntity = new ResponseEntity<>("No animal available!", null, HttpStatus.OK);
             }
+
+        }catch (Exception e){
+            responseEntity = new ResponseEntity<>("Internal server error!", null, HttpStatus.INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
+        }
+
+        return  responseEntity;
+    }
+
+    @PostMapping("/insert/animal/new")
+    ResponseEntity<Object> insertAnimal(@RequestBody String requestData){
+        ResponseEntity<Object> responseEntity = null;
+        AnimalDto animalDto = null;
+
+        try {
+
+            animalDto = new ObjectMapper().readValue(requestData, AnimalDto.class);
+            animalService.createOrUpdateAnimal(animalDto);
+            responseEntity = new ResponseEntity<>("Success", null, HttpStatus.OK);
 
         }catch (Exception e){
             responseEntity = new ResponseEntity<>("Internal server error!", null, HttpStatus.INTERNAL_SERVER_ERROR);
