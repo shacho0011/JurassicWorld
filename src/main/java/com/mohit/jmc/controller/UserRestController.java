@@ -3,8 +3,8 @@ package com.mohit.jmc.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mohit.jmc.dto.UserLoginDto;
 import com.mohit.jmc.dto.UserRegDto;
-import com.mohit.jmc.dto.security.JwtUser;
 import com.mohit.jmc.model.User;
+import com.mohit.jmc.model.security.JwtUser;
 import com.mohit.jmc.security.JwtGenerator;
 import com.mohit.jmc.service.UserService;
 
@@ -39,8 +39,7 @@ public class UserRestController {
 				if (user != null) {
 					if (passwordEncoder.matches(userLoginDto.getPassword(), user.getPassword())) {
 						JwtUser jwtUser = new JwtUser();
-						jwtUser.setId(user.getId());
-						jwtUser.setUserName(user.getEmail());
+						jwtUser.setUsername(user.getEmail());
 						jwtUser.setRole(user.getRole().getName());
 						HttpHeaders headers = new HttpHeaders();
 						headers.add("token", jwtGenerator.generate(jwtUser));
