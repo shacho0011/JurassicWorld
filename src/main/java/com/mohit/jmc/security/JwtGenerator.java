@@ -16,15 +16,18 @@ public class JwtGenerator {
 
 	@Value("${jwt.secret}")
 	private String secretKey;
+	
+	@Value("${jwt.expiration}")
+	private Long limit;
 
 	public String generate(JwtUser jwtUser) {
 
 		Claims claims = Jwts.claims().setSubject(jwtUser.getUsername());
 		claims.put("role", jwtUser.getRole());
 
-		long nowMillis = System.currentTimeMillis();
+		Long nowMillis = System.currentTimeMillis();
 		Date now = new Date(nowMillis);
-		long expMillis = nowMillis + 600000;
+		Long expMillis = nowMillis + limit;
 		Date exp = new Date(expMillis);
 
 		return Jwts.builder().setIssuedAt(now).setClaims(claims).signWith(SignatureAlgorithm.HS512, secretKey)
