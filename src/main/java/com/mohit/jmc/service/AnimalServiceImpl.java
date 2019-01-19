@@ -57,19 +57,12 @@ public class AnimalServiceImpl implements AnimalService{
     }
 
     @Override
-    public Boolean createOrUpdateAnimal(AnimalDto animalDto) {
-        Animal animal = null;
+    public Animal createOrUpdateAnimal(Animal animal, AnimalDto animalDto) {
 
         try {
 
-            if(animalDto.getId() == null ){
-                animal = new Animal();
-                animal = animalConverter.overwriteAnimal(animalDto, animal);
-            }else{
-                animal = animalRepository.findOne(animalDto.getId());
-                animal = animalConverter.overwriteAnimal(animalDto, animal);
-            }
-            animalRepository.save(animal);
+            animal = animalConverter.overwriteAnimal(animalDto, animal);
+            animal = animalRepository.save(animal);
 
         }catch (Exception e){
 
@@ -77,6 +70,6 @@ public class AnimalServiceImpl implements AnimalService{
 
         }
 
-        return true;
+        return animal;
     }
 }

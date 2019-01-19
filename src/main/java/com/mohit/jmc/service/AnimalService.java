@@ -10,6 +10,6 @@ public interface AnimalService {
     List<Animal> getAllAnimal();
     List<Animal> getAnimalByName(String name);
     Animal getAnimalById(Long id);
-    Boolean createOrUpdateAnimal(AnimalDto animalDto);
+    Animal createOrUpdateAnimal(Animal animal, AnimalDto animalDto);
 
 }
