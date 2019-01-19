@@ -33,7 +33,7 @@ public class UserRestController {
 				user = userService.getUserByUsername(userLoginDto.getEmail());
 				if (user != null) {
 					if (passwordEncoder.matches(userLoginDto.getPassword(), user.getPassword())) {
-						responseEntity = new ResponseEntity<>("Success", null, HttpStatus.OK);
+						responseEntity = new ResponseEntity<>("Login successful", null, HttpStatus.OK);
 					} else {
 						responseEntity = new ResponseEntity<>("Password mismatch!", null, HttpStatus.NOT_FOUND);
 					}
@@ -64,12 +64,12 @@ public class UserRestController {
 			User user = null;
 			user = userService.getUserByUsername(userRegDto.getEmail());
 			if (user != null) {
-				responseEntity = new ResponseEntity<>("Already registered", null, HttpStatus.INTERNAL_SERVER_ERROR);
+				responseEntity = new ResponseEntity<>("Already registered", null, HttpStatus.BAD_REQUEST);
 			} else {
 				user = new User();
 				user = userService.createOrUpdateUser(user, userRegDto);
-				responseEntity = new ResponseEntity<>("Insert operation success", null,
-						HttpStatus.INTERNAL_SERVER_ERROR);
+				responseEntity = new ResponseEntity<>("Registration successful", null,
+						HttpStatus.OK);
 			}
 
 		} catch (Exception e) {
