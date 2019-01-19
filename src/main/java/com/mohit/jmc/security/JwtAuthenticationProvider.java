@@ -9,44 +9,44 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import com.mohit.jmc.dto.security.JwtAuthenticationToken;
-import com.mohit.jmc.dto.security.JwtUser;
-import com.mohit.jmc.dto.security.JwtUserDetails;
+import com.mohit.jmc.model.security.JwtAuthenticationToken;
+import com.mohit.jmc.model.security.JwtUser;
+import com.mohit.jmc.model.security.JwtUserDetails;
 
 import java.util.List;
 
 @Component
 public class JwtAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
-    @Autowired
-    private JwtValidator validator;
+	@Autowired
+	private JwtValidator validator;
 
-    @Override
-    protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken) throws AuthenticationException {
+	@Override
+	protected void additionalAuthenticationChecks(UserDetails userDetails,
+			UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken) throws AuthenticationException {
 
-    }
+	}
 
-    @Override
-    protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken) throws AuthenticationException {
+	@Override
+	protected UserDetails retrieveUser(String username,
+			UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken) throws AuthenticationException {
 
-        JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) usernamePasswordAuthenticationToken;
-        String token = jwtAuthenticationToken.getToken();
+		JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) usernamePasswordAuthenticationToken;
+		String token = jwtAuthenticationToken.getToken();
 
-        JwtUser jwtUser = validator.validate(token);
+		JwtUser jwtUser = validator.validate(token);
 
-        if (jwtUser == null) {
-            throw new RuntimeException("JWT Token is incorrect");
-        }
+		if (jwtUser == null) {
+			throw new RuntimeException("JWT Token is incorrect");
+		}
 
-        List<GrantedAuthority> grantedAuthorities = AuthorityUtils
-                .commaSeparatedStringToAuthorityList(jwtUser.getRole());
-        return new JwtUserDetails(jwtUser.getUserName(), jwtUser.getId(),
-                token,
-                grantedAuthorities);
-    }
+		List<GrantedAuthority> grantedAuthorities = AuthorityUtils
+				.commaSeparatedStringToAuthorityList(jwtUser.getRole());
+		return new JwtUserDetails(jwtUser.getUsername(), token, grantedAuthorities);
+	}
 
-    @Override
-    public boolean supports(Class<?> aClass) {
-        return (JwtAuthenticationToken.class.isAssignableFrom(aClass));
-    }
+	@Override
+	public boolean supports(Class<?> aClass) {
+		return (JwtAuthenticationToken.class.isAssignableFrom(aClass));
+	}
 }

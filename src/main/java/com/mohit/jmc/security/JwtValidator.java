@@ -6,33 +6,28 @@ import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.mohit.jmc.dto.security.JwtUser;
+import com.mohit.jmc.model.security.JwtUser;
 
 @Component
 public class JwtValidator {
 
 	@Value("${jwt.secret}")
-    private String secretKey;
+	private String secretKey;
 
-    public JwtUser validate(String token) {
+	public JwtUser validate(String token) {
 
-        JwtUser jwtUser = null;
-        try {
-            Claims body = Jwts.parser()
-                    .setSigningKey(secretKey)
-                    .parseClaimsJws(token)
-                    .getBody();
+		JwtUser jwtUser = null;
+		try {
+			Claims body = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
 
-            jwtUser = new JwtUser();
+			jwtUser = new JwtUser();
 
-            jwtUser.setUserName(body.getSubject());
-            jwtUser.setId(Long.parseLong((String) body.get("userId")));
-            jwtUser.setRole((String) body.get("role"));
-        }
-        catch (Exception e) {
-            System.out.println(e);
-        }
+			jwtUser.setUsername(body.getSubject());
+			jwtUser.setRole((String) body.get("role"));
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 
-        return jwtUser;
-    }
+		return jwtUser;
+	}
 }
