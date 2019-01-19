@@ -20,12 +20,12 @@ dbname = "jw_dev" // for dev profile
 ----------------------------------------------------------------
 
 ------------------------------------------------------
-		User					Password		 Role
+	Username		Password	Role
 ------------------------------------------------------
-"shadhin.aust@gmail.com"			"admin" 	"admin"
-"karim@gmail.com"					"admin"		"user"
-"bayezid@gmail.com"					"admin"		"user"
-"ariful@gmail.com"					"admin"		"user"
+"shadhin.aust@gmail.com"	"admin" 	"admin"
+"karim@gmail.com"		"admin"		"user"
+"bayezid@gmail.com"		"admin"		"user"
+"ariful@gmail.com"		"admin"		"user"
 
 NOTE: Only #Admin has the authority to delete any data(as for example)
 
