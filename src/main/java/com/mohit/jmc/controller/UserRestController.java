@@ -3,10 +3,13 @@ package com.mohit.jmc.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mohit.jmc.dto.UserLoginDto;
 import com.mohit.jmc.dto.UserRegDto;
+import com.mohit.jmc.dto.security.JwtUser;
 import com.mohit.jmc.model.User;
+import com.mohit.jmc.security.JwtGenerator;
 import com.mohit.jmc.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +23,8 @@ public class UserRestController {
 	UserService userService;
 	@Autowired
 	PasswordEncoder passwordEncoder;
+	@Autowired
+	JwtGenerator jwtGenerator;
 
 	@GetMapping("/login")
 	ResponseEntity<Object> getUserByUsername(@RequestBody String requestData) {
@@ -33,7 +38,13 @@ public class UserRestController {
 				user = userService.getUserByUsername(userLoginDto.getEmail());
 				if (user != null) {
 					if (passwordEncoder.matches(userLoginDto.getPassword(), user.getPassword())) {
-						responseEntity = new ResponseEntity<>("Login successful", null, HttpStatus.OK);
+						JwtUser jwtUser = new JwtUser();
+						jwtUser.setId(user.getId());
+						jwtUser.setUserName(user.getEmail());
+						jwtUser.setRole(user.getRole().getName());
+						HttpHeaders headers = new HttpHeaders();
+						headers.add("token", jwtGenerator.generate(jwtUser));
+						responseEntity = new ResponseEntity<>("Login successful", headers, HttpStatus.OK);
 					} else {
 						responseEntity = new ResponseEntity<>("Password mismatch!", null, HttpStatus.NOT_FOUND);
 					}
@@ -68,8 +79,7 @@ public class UserRestController {
 			} else {
 				user = new User();
 				user = userService.createOrUpdateUser(user, userRegDto);
-				responseEntity = new ResponseEntity<>("Registration successful", null,
-						HttpStatus.OK);
+				responseEntity = new ResponseEntity<>("Registration successful", null, HttpStatus.OK);
 			}
 
 		} catch (Exception e) {
