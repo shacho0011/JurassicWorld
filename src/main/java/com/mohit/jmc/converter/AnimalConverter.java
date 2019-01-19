@@ -12,31 +12,30 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 public class AnimalConverter {
 
-    @Autowired
-    GenderRepository genderRepository;
+	@Autowired
+	GenderRepository genderRepository;
 
-    public Animal overwriteAnimal(AnimalDto dto, Animal animal){
+	public Animal overwriteAnimal(AnimalDto dto, Animal animal) {
 
-        if(dto.getName() != null){
-            animal.setName(dto.getName());
-        }
-        if(dto.getGender() != null){
-            Gender gender = null;
-            try {
-                Long id = Long.parseLong(dto.getGender());
-                gender = genderRepository.findOne(id);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-            animal.setGender(gender);
-        }
-        if(dto.getPrice() != null){
-            animal.setPrice(dto.getPrice());
-        }
-        if(dto.getDescription() != null){
-            animal.setDescription(dto.getDescription());
-        }
+		if (dto.getName() != null) {
+			animal.setName(dto.getName());
+		}
+		if (dto.getGenderName() != null) {
+			Gender gender = null;
+			try {
+				gender = genderRepository.findByName(dto.getGenderName());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			animal.setGender(gender);
+		}
+		if (dto.getPrice() != null) {
+			animal.setPrice(dto.getPrice());
+		}
+		if (dto.getDescription() != null) {
+			animal.setDescription(dto.getDescription());
+		}
 
-        return animal;
-    }
+		return animal;
+	}
 }
