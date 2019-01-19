@@ -4,13 +4,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mohit.jmc.dto.AnimalDto;
 import com.mohit.jmc.dto.AnimalOverviewDto;
 import com.mohit.jmc.model.Animal;
+import com.mohit.jmc.model.User;
 import com.mohit.jmc.service.AnimalService;
 import com.mohit.jmc.service.DtoUtilService;
+import com.mohit.jmc.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +27,8 @@ public class AnimalRestController {
 	AnimalService animalService;
 	@Autowired
 	DtoUtilService dtoUtilService;
+	@Autowired
+	UserService userService;
 
 	@GetMapping("/animals")
 	ResponseEntity<Object> getAllAnimal(@RequestHeader("animal_id") Optional<Long> id) {
@@ -60,7 +66,7 @@ public class AnimalRestController {
 		return responseEntity;
 	}
 
-	@GetMapping("/animal")
+	@GetMapping("/search/animals")
 	ResponseEntity<Object> getAnimalsByName(@RequestHeader("animal_name") String name) {
 		ResponseEntity<Object> responseEntity = null;
 
@@ -85,7 +91,7 @@ public class AnimalRestController {
 		return responseEntity;
 	}
 
-	@PostMapping("/insert/animal/new")
+	@PostMapping("/insert/animals/new")
 	ResponseEntity<Object> insertAnimal(@RequestBody String requestData) {
 		ResponseEntity<Object> responseEntity = null;
 		AnimalDto animalDto = null;
@@ -106,7 +112,7 @@ public class AnimalRestController {
 		return responseEntity;
 	}
 
-	@PutMapping("/update/animal")
+	@PutMapping("/update/animals")
 	ResponseEntity<Object> updateAnimal(@RequestHeader("animal_id") Long id, @RequestBody String requestData) {
 		ResponseEntity<Object> responseEntity = null;
 		AnimalDto animalDto = null;
@@ -128,13 +134,20 @@ public class AnimalRestController {
 	}
 
 	@DeleteMapping("/delete/animals")
-	ResponseEntity<Object> deleteAnimal(@RequestHeader("animal_id") Long id) {
+	ResponseEntity<Object> deleteAnimal(Principal principal, @RequestHeader("animal_id") Long id) {
 		ResponseEntity<Object> responseEntity = null;
+		User user = null;
 
 		try {
 
-			animalService.removeAnimalById(id);
-			responseEntity = new ResponseEntity<>("Delete operation successful", null, HttpStatus.OK);
+			user = userService.getUserDetails(principal);
+			System.out.println(user != null ? user.getEmail() : "null");
+			if (user != null && user.getRole().getName().toLowerCase().equals("admin")) {
+				animalService.removeAnimalById(id);
+				responseEntity = new ResponseEntity<>("Delete operation successful", null, HttpStatus.OK);
+			} else {
+				responseEntity = new ResponseEntity<>("Forbidden access", null, HttpStatus.FORBIDDEN);
+			}
 
 		} catch (Exception e) {
 			responseEntity = new ResponseEntity<>("Internal server error!", null, HttpStatus.INTERNAL_SERVER_ERROR);
