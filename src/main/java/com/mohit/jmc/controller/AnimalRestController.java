@@ -91,7 +91,7 @@ public class AnimalRestController {
             animalDto = new ObjectMapper().readValue(requestData, AnimalDto.class);
             animal = new Animal();
             animal = animalService.createOrUpdateAnimal(animal, animalDto);
-            responseEntity = new ResponseEntity<>("Insert operation success", null, HttpStatus.OK);
+            responseEntity = new ResponseEntity<>("Insert operation successful", null, HttpStatus.OK);
 
         }catch (Exception e){
             responseEntity = new ResponseEntity<>("Internal server error!", null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -112,7 +112,7 @@ public class AnimalRestController {
             animal = animalService.getAnimalById(id);
             animalDto = new ObjectMapper().readValue(requestData, AnimalDto.class);
             animalService.createOrUpdateAnimal(animal, animalDto);
-            responseEntity = new ResponseEntity<>("Update operation success", null, HttpStatus.OK);
+            responseEntity = new ResponseEntity<>("Update operation successful", null, HttpStatus.OK);
 
         } catch (Exception e) {
             responseEntity = new ResponseEntity<>("Internal server error!", null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -129,7 +129,7 @@ public class AnimalRestController {
         try {
 
             animalService.removeAnimalById(id);
-            responseEntity = new ResponseEntity<>("Delete operation success", null, HttpStatus.OK);
+            responseEntity = new ResponseEntity<>("Delete operation successful", null, HttpStatus.OK);
 
         } catch (Exception e) {
             responseEntity = new ResponseEntity<>("Internal server error!", null, HttpStatus.INTERNAL_SERVER_ERROR);
