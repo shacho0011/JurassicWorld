@@ -84,11 +84,13 @@ public class AnimalRestController {
     ResponseEntity<Object> insertAnimal(@RequestBody String requestData){
         ResponseEntity<Object> responseEntity = null;
         AnimalDto animalDto = null;
+        Animal animal = null;
 
         try {
 
             animalDto = new ObjectMapper().readValue(requestData, AnimalDto.class);
-            animalService.createOrUpdateAnimal(animalDto);
+            animal = new Animal();
+            animalService.createOrUpdateAnimal(animal, animalDto);
             responseEntity = new ResponseEntity<>("Success", null, HttpStatus.OK);
 
         }catch (Exception e){
@@ -97,6 +99,27 @@ public class AnimalRestController {
         }
 
         return  responseEntity;
+    }
+
+    @PutMapping("/update/animal")
+    ResponseEntity<Object> updateAnimal(@RequestHeader Long id, @RequestBody String requestData) {
+        ResponseEntity<Object> responseEntity;
+        AnimalDto animalDto = null;
+        Animal animal = null;
+
+        try {
+
+            animal = animalService.getAnimalById(id);
+            animalDto = new ObjectMapper().readValue(requestData, AnimalDto.class);
+            animalService.createOrUpdateAnimal(animal, animalDto);
+            responseEntity = new ResponseEntity<>("Success", null, HttpStatus.OK);
+
+        } catch (Exception e) {
+            responseEntity = new ResponseEntity<>("Internal server error!", null, HttpStatus.INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
+        }
+
+        return responseEntity;
     }
 
 }
