@@ -15,7 +15,7 @@ import com.mohit.jmc.dto.security.JwtUser;
 public class JwtGenerator {
 
 	@Value("${jwt.secret}")
-	private String token;
+	private String secretKey;
 
 	public String generate(JwtUser jwtUser) {
 
@@ -28,7 +28,7 @@ public class JwtGenerator {
 		long expMillis = nowMillis + 60000;
 		Date exp = new Date(expMillis);
 
-		return Jwts.builder().setIssuedAt(now).setClaims(claims).signWith(SignatureAlgorithm.HS512, token)
+		return Jwts.builder().setIssuedAt(now).setClaims(claims).signWith(SignatureAlgorithm.HS512, secretKey)
 				.setExpiration(exp).compact();
 	}
 }

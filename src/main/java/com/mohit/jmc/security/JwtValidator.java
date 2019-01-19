@@ -12,14 +12,14 @@ import com.mohit.jmc.dto.security.JwtUser;
 public class JwtValidator {
 
 	@Value("${jwt.secret}")
-    private String secret;
+    private String secretKey;
 
     public JwtUser validate(String token) {
 
         JwtUser jwtUser = null;
         try {
             Claims body = Jwts.parser()
-                    .setSigningKey(secret)
+                    .setSigningKey(secretKey)
                     .parseClaimsJws(token)
                     .getBody();
 
