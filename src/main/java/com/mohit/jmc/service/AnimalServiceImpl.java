@@ -72,4 +72,22 @@ public class AnimalServiceImpl implements AnimalService{
 
         return animal;
     }
+
+    @Override
+    public Boolean removeAnimalById(Long id) {
+        Animal animal = null;
+
+        try {
+
+            animal = animalRepository.findOne(id);
+            animalRepository.delete(animal);
+
+        }catch (Exception e){
+
+            e.printStackTrace();
+
+        }
+
+        return true;
+    }
 }
