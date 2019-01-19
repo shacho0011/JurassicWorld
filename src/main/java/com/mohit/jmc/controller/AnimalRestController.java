@@ -19,124 +19,129 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class AnimalRestController {
 
-    @Autowired
-    AnimalService animalService;
-    @Autowired
-    DtoUtilService dtoUtilService;
+	@Autowired
+	AnimalService animalService;
+	@Autowired
+	DtoUtilService dtoUtilService;
 
-    @GetMapping("/animals")
-    ResponseEntity<Object> getAllAnimal(@RequestHeader Optional<Long> id){
-        ResponseEntity<Object> responseEntity = null;
+	@GetMapping("/animals")
+	ResponseEntity<Object> getAllAnimal(@RequestHeader("animal_id") Optional<Long> id) {
+		ResponseEntity<Object> responseEntity = null;
 
-        try {
+		try {
 
-            if(id.isPresent()){
-                Animal animal = animalService.getAnimalById(id.get());
-                AnimalOverviewDto animalOverviewDto = dtoUtilService.convertToAnimalOverviewDto(animal);
-                responseEntity = new ResponseEntity<>(animalOverviewDto, null, HttpStatus.OK);
-            }else{
-                List<Animal> animalList = animalService.getAllAnimal();
-                if(animalList.size() > 0){
-                    List<AnimalOverviewDto> animalOverviewDtoList = new ArrayList<>();
-                    animalList.forEach(animal -> {
-                        animalOverviewDtoList.add(dtoUtilService.convertToAnimalOverviewDto(animal));
-                    });
-                    responseEntity = new ResponseEntity<>(animalOverviewDtoList, null, HttpStatus.OK);
-                }else{
-                    responseEntity = new ResponseEntity<>("No animal available!", null, HttpStatus.OK);
-                }
-            }
+			if (id.isPresent()) {
+				Animal animal = animalService.getAnimalById(id.get());
+				if (animal != null) {
+					AnimalOverviewDto animalOverviewDto = dtoUtilService.convertToAnimalOverviewDto(animal);
+					responseEntity = new ResponseEntity<>(animalOverviewDto, null, HttpStatus.OK);
+				} else {
+					responseEntity = new ResponseEntity<>("No animal available!", null, HttpStatus.OK);
+				}
 
-        }catch (Exception e){
-            responseEntity = new ResponseEntity<>("Internal server error!", null, HttpStatus.INTERNAL_SERVER_ERROR);
-            e.printStackTrace();
-        }
+			} else {
+				List<Animal> animalList = animalService.getAllAnimal();
+				if (animalList.size() > 0) {
+					List<AnimalOverviewDto> animalOverviewDtoList = new ArrayList<>();
+					animalList.forEach(animal -> {
+						animalOverviewDtoList.add(dtoUtilService.convertToAnimalOverviewDto(animal));
+					});
+					responseEntity = new ResponseEntity<>(animalOverviewDtoList, null, HttpStatus.OK);
+				} else {
+					responseEntity = new ResponseEntity<>("No animal available!", null, HttpStatus.OK);
+				}
+			}
 
-        return  responseEntity;
-    }
+		} catch (Exception e) {
+			responseEntity = new ResponseEntity<>("Internal server error!", null, HttpStatus.INTERNAL_SERVER_ERROR);
+			e.printStackTrace();
+		}
 
-    @GetMapping("/animal")
-    ResponseEntity<Object> getAnimalsByName(@RequestHeader String name){
-        ResponseEntity<Object> responseEntity = null;
+		return responseEntity;
+	}
 
-        try {
+	@GetMapping("/animal")
+	ResponseEntity<Object> getAnimalsByName(@RequestHeader("animal_name") String name) {
+		ResponseEntity<Object> responseEntity = null;
 
-            List<Animal> animalList = animalService.getAnimalByName(name);
-            if(animalList.size() > 0){
-                List<AnimalOverviewDto> animalOverviewDtoList = new ArrayList<>();
-                animalList.forEach(animal -> {
-                    animalOverviewDtoList.add(dtoUtilService.convertToAnimalOverviewDto(animal));
-                });
-                responseEntity = new ResponseEntity<>(animalOverviewDtoList, null, HttpStatus.OK);
-            }else{
-                responseEntity = new ResponseEntity<>("No animal available!", null, HttpStatus.OK);
-            }
+		try {
 
-        }catch (Exception e){
-            responseEntity = new ResponseEntity<>("Internal server error!", null, HttpStatus.INTERNAL_SERVER_ERROR);
-            e.printStackTrace();
-        }
+			List<Animal> animalList = animalService.getAnimalByName(name);
+			if (animalList.size() > 0) {
+				List<AnimalOverviewDto> animalOverviewDtoList = new ArrayList<>();
+				animalList.forEach(animal -> {
+					animalOverviewDtoList.add(dtoUtilService.convertToAnimalOverviewDto(animal));
+				});
+				responseEntity = new ResponseEntity<>(animalOverviewDtoList, null, HttpStatus.OK);
+			} else {
+				responseEntity = new ResponseEntity<>("No animal available!", null, HttpStatus.OK);
+			}
 
-        return  responseEntity;
-    }
+		} catch (Exception e) {
+			responseEntity = new ResponseEntity<>("Internal server error!", null, HttpStatus.INTERNAL_SERVER_ERROR);
+			e.printStackTrace();
+		}
 
-    @PostMapping("/insert/animal/new")
-    ResponseEntity<Object> insertAnimal(@RequestBody String requestData){
-        ResponseEntity<Object> responseEntity = null;
-        AnimalDto animalDto = null;
-        Animal animal = null;
+		return responseEntity;
+	}
 
-        try {
+	@PostMapping("/insert/animal/new")
+	ResponseEntity<Object> insertAnimal(@RequestBody String requestData) {
+		ResponseEntity<Object> responseEntity = null;
+		AnimalDto animalDto = null;
+		Animal animal = null;
 
-            animalDto = new ObjectMapper().readValue(requestData, AnimalDto.class);
-            animal = new Animal();
-            animal = animalService.createOrUpdateAnimal(animal, animalDto);
-            responseEntity = new ResponseEntity<>("Insert operation successful", null, HttpStatus.OK);
+		try {
 
-        }catch (Exception e){
-            responseEntity = new ResponseEntity<>("Internal server error!", null, HttpStatus.INTERNAL_SERVER_ERROR);
-            e.printStackTrace();
-        }
+			animalDto = new ObjectMapper().readValue(requestData, AnimalDto.class);
+			animal = new Animal();
+			animal = animalService.createOrUpdateAnimal(animal, animalDto);
+			responseEntity = new ResponseEntity<>("Insert operation successful", null, HttpStatus.OK);
 
-        return  responseEntity;
-    }
+		} catch (Exception e) {
+			responseEntity = new ResponseEntity<>("Internal server error!", null, HttpStatus.INTERNAL_SERVER_ERROR);
+			e.printStackTrace();
+		}
 
-    @PutMapping("/update/animal")
-    ResponseEntity<Object> updateAnimal(@RequestHeader Long id, @RequestBody String requestData) {
-        ResponseEntity<Object> responseEntity = null;
-        AnimalDto animalDto = null;
-        Animal animal = null;
+		return responseEntity;
+	}
 
-        try {
+	@PutMapping("/update/animal")
+	ResponseEntity<Object> updateAnimal(@RequestHeader("animal_id") Long id, @RequestBody String requestData) {
+		ResponseEntity<Object> responseEntity = null;
+		AnimalDto animalDto = null;
+		Animal animal = null;
 
-            animal = animalService.getAnimalById(id);
-            animalDto = new ObjectMapper().readValue(requestData, AnimalDto.class);
-            animalService.createOrUpdateAnimal(animal, animalDto);
-            responseEntity = new ResponseEntity<>("Update operation successful", null, HttpStatus.OK);
+		try {
 
-        } catch (Exception e) {
-            responseEntity = new ResponseEntity<>("Internal server error!", null, HttpStatus.INTERNAL_SERVER_ERROR);
-            e.printStackTrace();
-        }
+			animal = animalService.getAnimalById(id);
+			animalDto = new ObjectMapper().readValue(requestData, AnimalDto.class);
+			animalService.createOrUpdateAnimal(animal, animalDto);
+			responseEntity = new ResponseEntity<>("Update operation successful", null, HttpStatus.OK);
 
-        return responseEntity;
-    }
+		} catch (Exception e) {
+			responseEntity = new ResponseEntity<>("Internal server error!", null, HttpStatus.INTERNAL_SERVER_ERROR);
+			e.printStackTrace();
+		}
 
-    @DeleteMapping("/delete/animals")
-    ResponseEntity<Object> deleteAnimal(@RequestHeader("animal_id") Long id) {
-        ResponseEntity<Object> responseEntity = null;
+		return responseEntity;
+	}
 
-        try {
+	@DeleteMapping("/delete/animals")
+	ResponseEntity<Object> deleteAnimal(@RequestHeader("animal_id") Long id) {
+		ResponseEntity<Object> responseEntity = null;
 
-            animalService.removeAnimalById(id);
-            responseEntity = new ResponseEntity<>("Delete operation successful", null, HttpStatus.OK);
+		try {
 
-        } catch (Exception e) {
-            responseEntity = new ResponseEntity<>("Internal server error!", null, HttpStatus.INTERNAL_SERVER_ERROR);
-            e.printStackTrace();
-        }
+			animalService.removeAnimalById(id);
+			responseEntity = new ResponseEntity<>("Delete operation successful", null, HttpStatus.OK);
 
-        return responseEntity;
-    }
+		} catch (Exception e) {
+			responseEntity = new ResponseEntity<>("Internal server error!", null, HttpStatus.INTERNAL_SERVER_ERROR);
+			e.printStackTrace();
+		}
+
+		return responseEntity;
+	}
 
 }
