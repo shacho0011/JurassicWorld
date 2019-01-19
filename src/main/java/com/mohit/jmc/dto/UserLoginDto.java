@@ -3,7 +3,7 @@ package com.mohit.jmc.dto;
 import lombok.Data;
 
 @Data
-public class UserOverviewDto {
+public class UserLoginDto {
 
     String email;
     String password;
