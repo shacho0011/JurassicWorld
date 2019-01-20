@@ -11,6 +11,6 @@ public interface AnimalService {
     List<Animal> getAnimalByName(String name);
     Animal getAnimalById(Long id);
     Animal createOrUpdateAnimal(Animal animal, AnimalDto animalDto);
-    Boolean removeAnimalById(Long id);
+    Boolean removeAnimalById(Animal animal);
 
 }
