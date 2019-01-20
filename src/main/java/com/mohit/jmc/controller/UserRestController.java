@@ -26,7 +26,7 @@ public class UserRestController {
 	@Autowired
 	JwtGenerator jwtGenerator;
 
-	@GetMapping("/login")
+	@PostMapping("/login")
 	ResponseEntity<Object> getUserByUsername(@RequestBody String requestData) {
 		ResponseEntity<Object> responseEntity = null;
 
