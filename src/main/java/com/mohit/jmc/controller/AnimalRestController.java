@@ -121,9 +121,13 @@ public class AnimalRestController {
 		try {
 
 			animal = animalService.getAnimalById(id);
-			animalDto = new ObjectMapper().readValue(requestData, AnimalDto.class);
-			animalService.createOrUpdateAnimal(animal, animalDto);
-			responseEntity = new ResponseEntity<>("Update operation successful", null, HttpStatus.OK);
+			if (animal != null) {
+				animalDto = new ObjectMapper().readValue(requestData, AnimalDto.class);
+				animalService.createOrUpdateAnimal(animal, animalDto);
+				responseEntity = new ResponseEntity<>("Update operation successful", null, HttpStatus.OK);
+			} else {
+				responseEntity = new ResponseEntity<>("No animal available", null, HttpStatus.BAD_REQUEST);
+			}
 
 		} catch (Exception e) {
 			responseEntity = new ResponseEntity<>("Internal server error!", null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -137,14 +141,20 @@ public class AnimalRestController {
 	ResponseEntity<Object> deleteAnimal(Principal principal, @RequestHeader("animal_id") Long id) {
 		ResponseEntity<Object> responseEntity = null;
 		User user = null;
+		Animal animal = null;
 
 		try {
 
 			user = userService.getUserDetails(principal);
 			System.out.println(user != null ? user.getEmail() : "null");
 			if (user != null && user.getRole().getName().toLowerCase().equals("admin")) {
-				animalService.removeAnimalById(id);
-				responseEntity = new ResponseEntity<>("Delete operation successful", null, HttpStatus.OK);
+				animal = animalService.getAnimalById(id);
+				if (animal != null) {
+					animalService.removeAnimalById(animal);
+					responseEntity = new ResponseEntity<>("Delete operation successful", null, HttpStatus.OK);
+				} else {
+					responseEntity = new ResponseEntity<>("No animal available", null, HttpStatus.BAD_REQUEST);
+				}
 			} else {
 				responseEntity = new ResponseEntity<>("Forbidden access", null, HttpStatus.FORBIDDEN);
 			}
